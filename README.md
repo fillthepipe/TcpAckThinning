@@ -2,9 +2,10 @@
 
 An attempt to understand impact of ACK thinning on TCP using Linux Kernel 5.3.0.
 
-There are two primary changes:
-1. A new sockops called `BPF_SOCK_OPS_ACK_THRESH_INIT` is added which can be controlled using `BPF_CGROUP_SOCK_OPS`.
-2. Sample bpf code (`samples/bpf/ack_thinning_*.c`) to use the above BPF option to change the threshold.
+Following are the primary changes:
+1. Kernel changes: A new sockops called `BPF_SOCK_OPS_ACK_THRESH_INIT` is added which can be controlled using `BPF_CGROUP_SOCK_OPS`.
+2. BPF bytecode: Sample bpf code (`samples/bpf/ack_thinning_*.c`) to use the above BPF option to change the threshold.
+3. Tools: Sample tools for monitoring.
 
 
 ## Setup Kernel
