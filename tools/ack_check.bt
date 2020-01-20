@@ -1,4 +1,5 @@
 #!/usr/bin/env bpftrace
+#
 
 #define KBUILD_MODNAME "bpftrace"
 
