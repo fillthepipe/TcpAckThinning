@@ -1,0 +1,111 @@
+@[kprobe:tcp_send_ack]: 35848
+@[kprobe:tcp_event_data_recv]: 40956
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 36672
+@[kprobe:tcp_event_data_recv]: 42246
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 35346
+@[kprobe:tcp_event_data_recv]: 40401
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 35275
+@[kprobe:tcp_event_data_recv]: 40457
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 29453
+@[kprobe:tcp_event_data_recv]: 43005
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 36936
+@[kprobe:tcp_event_data_recv]: 42398
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 36683
+@[kprobe:tcp_event_data_recv]: 42478
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 29001
+@[kprobe:tcp_event_data_recv]: 42126
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 35811
+@[kprobe:tcp_event_data_recv]: 41561
+
+
+
+Attaching 4 probes...
+----------------------------------------------
+THRESH=0
+updated RCV_MSS=536
+updated RCV_MSS=1448
+
+
+@[kprobe:tcp_send_ack]: 28978
+@[kprobe:tcp_event_data_recv]: 42112
+

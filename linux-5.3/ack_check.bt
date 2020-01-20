@@ -1,0 +1,124 @@
+#!/usr/bin/env bpftrace
+
+#define KBUILD_MODNAME "bpftrace"
+
+#include <linux/skbuff.h>
+#include <linux/netdevice.h>
+#include <linux/tcp.h>
+#include <net/inet_connection_sock.h>
+
+/*
+kprobe:__tcp_ack_snd_check
+{
+    $sk = (struct sock *)arg0;
+    $lport = $sk->__sk_common.skc_num;
+    $dport = $sk->__sk_common.skc_dport;
+    $dport = ($dport >> 8) | (($dport << 8) & 0x00ff00);
+    if ($dport == 12345 || $lport == 12345) {
+        printf("CHK: Thresh=%d, mss=%d, diff=%d, quickack=%d\n",
+            ((struct inet_connection_sock *)arg0)->icsk_ack.calc_thresh,
+            ((struct inet_connection_sock *)arg0)->icsk_ack.rcv_mss,
+            ((struct tcp_sock *)arg0)->rcv_nxt - ((struct tcp_sock *)$sk)->rcv_wup,
+            ((struct inet_connection_sock *)arg0)->icsk_ack.quick
+            );
+    }
+}
+*/
+
+BEGIN
+{
+    @cnt = 0;
+}
+
+/*
+kprobe:__tcp_ack_snd_check
+{
+    $sk = (struct sock *)arg0;
+    $lport = $sk->__sk_common.skc_num;
+    $dport = $sk->__sk_common.skc_dport;
+    $dport = ($dport >> 8) | (($dport << 8) & 0x00ff00);
+    if ($dport == 12345 || $lport == 12345) {
+        @cnt++;
+        printf("QUICKACK(%d): ofo=%d quic=%d, pingpong=%d\n", @cnt, arg1,
+            ((struct inet_connection_sock *)arg0)->icsk_ack.quick,
+            ((struct inet_connection_sock *)arg0)->icsk_ack.pingpong
+            );
+    }
+}
+*/
+
+kprobe:tcp_connect
+{
+    $sk = (struct sock *)arg0;
+    $lport = $sk->__sk_common.skc_num;
+    $dport = $sk->__sk_common.skc_dport;
+    $dport = ($dport >> 8) | (($dport << 8) & 0x00ff00);
+    if ($dport == 12345 || $lport == 12345) {
+        printf("CONNECT: ACK Thresh=%d quack=%d dport=%d lport=%d\n",
+            ((struct inet_connection_sock *)arg0)->icsk_ack.calc_thresh,
+            ((struct inet_connection_sock *)arg0)->icsk_ack.quick,
+            $dport, $lport);
+    }
+}
+
+kprobe:tcp_event_data_recv,
+kprobe:tcp_send_ack,
+kprobe:tcp_send_dupack,
+kprobe:tcp_recvmsg,
+kprobe:__tcp_ack_snd_check
+{
+    $sk = (struct sock *)arg0;
+    $lport = $sk->__sk_common.skc_num;
+    $dport = $sk->__sk_common.skc_dport;
+    $dport = ($dport >> 8) | (($dport << 8) & 0x00ff00);
+    if ($dport == 12345 || $lport == 12345) {
+        @[probe] = count();
+    }
+}
+
+kprobe:tcp_fin,
+kprobe:tcp_send_dupack,
+kprobe:__tcp_ack_snd_check,
+kprobe:tcp_compressed_ack_kick,
+kprobe:tcp_cleanup_rbuf,
+kprobe:tcp_delack_timer_handler,
+//FAILS kprobe:tcp_send_challenge_ack,
+//FAILS kprobe:tcp_sack_new_ofo_skb,
+//FAILS kprobe:tcp_rcv_synsent_state_process,
+kprobe:tcp_send_delayed_ack
+{
+    $sk = (struct sock *)arg0;
+    $lport = $sk->__sk_common.skc_num;
+    $dport = $sk->__sk_common.skc_dport;
+    $dport = ($dport >> 8) | (($dport << 8) & 0x00ff00);
+    if ($dport == 12345 || $lport == 12345) {
+        @funhit[tid] = 1;
+    }
+}
+
+kretprobe:tcp_fin,
+kretprobe:tcp_send_dupack,
+kretprobe:__tcp_ack_snd_check,
+kretprobe:tcp_compressed_ack_kick,
+kretprobe:tcp_cleanup_rbuf,
+kretprobe:tcp_delack_timer_handler,
+kretprobe:tcp_send_delayed_ack
+/@funhit[tid] == 1/
+{
+    delete(@funhit[tid]);
+    if (@send_ack_flag[tid] == 1) {
+        @send_ack_cnt[probe]++;
+        @send_ack_flag[tid] = 0;
+    }
+}
+
+kprobe:tcp_send_ack /@funhit[tid]/
+{
+    @send_ack_flag[tid] = 1;
+}
+
+END
+{
+    clear(@cnt);
+    clear(@send_ack_flag);
+}
