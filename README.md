@@ -38,4 +38,4 @@ We use bpftrace to track the `tcp_send_ack()` and `tcp_recv_data_event()`
 calls. We also verify the data/acks counts from the packet capture and ensure
 that they match. Further we use the bpftrace to track from which higher level
 apis the send-ack call was initiated. Check
-`(tools/ack_check.bt)[tools/ack_check.bt]` has the details.
+`[tools/ack_check.bt](tools/ack_check.bt)` has the details.
