@@ -31,7 +31,7 @@ int bpf_bufs(struct bpf_sock_ops *skops)
 		return 1;
 	}
 
-    skops->reply = 64*1448; // L * MSS
+    skops->reply = 1*1448; // L * MSS
 	bpf_printk("setting threshold %d\n", skops->reply);
 	return 1;
 }

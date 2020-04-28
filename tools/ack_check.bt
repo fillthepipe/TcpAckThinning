@@ -33,6 +33,22 @@ BEGIN
     printf("----------------------------------------------\n");
 }
 
+/*
+kprobe:___ieee80211_start_rx_ba_session,
+tracepoint:iwlwifi:iwlwifi_dev_rx,
+kprobe:iwl_pcie_rx_handle,
+tracepoint:iwlwifi:iwlwifi_dev_tx
+{
+    @[probe] = count();
+}
+
+tracepoint:iwlwifi:iwlwifi_dev_rx
+{
+    // @hj = hist(args->cmd);
+    @wifi_cmd[args->cmd]++;
+}
+*/
+
 kprobe:tcp_event_data_recv,
 //kprobe:tcp_send_dupack,
 //kprobe:tcp_recvmsg,
@@ -108,5 +124,5 @@ END
 {
     clear(@rcv_mss);
     clear(@cnt);
-//  clear(@send_ack_flag);
+ //   clear(@send_ack_flag);
 }
